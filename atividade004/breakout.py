@@ -1,4 +1,4 @@
-# breakout - one block per paddle hit, blocks solid after break
+# breakout
 
 # First test comment of the break code
 import math
@@ -190,19 +190,17 @@ def move_ball(ball, lives):
     return movement, lives
 
 
+# (Don't forget to have 'import math' at the top of your file)
+
 # BALL COLLISION
 def ball_collision_player(ball, player):
     """Check ball collision with player and adjust speed."""
-    global hit_green, hit_orange, hit_red, can_break_block
+    global can_break_block, hit_green, hit_orange, hit_red
+
     if ball.colliderect(player) and ball_move[1] > 0:
         sound_collision.play()
-        ball.bottom = player.top
-        ball_move[1] = -ball_move[1]
-        offset = ball.centerx - player.centerx
-        new_speed_x = max(-6, min(6, offset / 10))
-        ball_move[0] = new_speed_x
 
-        # Adjust target speed according to levels
+        # 1. Determine the target speed based on game progress
         target_speed = speed_level_1
         if hit_green:
             target_speed = speed_level_2
@@ -211,13 +209,25 @@ def ball_collision_player(ball, player):
         if hit_red:
             target_speed = speed_level_4
 
-        current_speed = math.sqrt(ball_move[0]**2 + ball_move[1]**2)
-        if current_speed > 0:
-            factor = target_speed / current_speed
-            ball_move[0] *= factor
-            ball_move[1] *= factor
+        # --- NEW PRECISE RICOCHET LOGIC ---
+        # 2. Calculate the normalized impact point on the paddle
+        # (-1.0 on the left edge, 0.0 in the center, 1.0 on the right edge)
+        impact_point = (ball.centerx - player.centerx) / (player.width / 2.0)
 
-        # Reset permission to break one block per paddle hit
+        impact_point = max(-1.0, min(1.0, impact_point))
+
+        max_bounce_angle = math.radians(75)
+
+        # 4. Calculate the new exit angle
+        bounce_angle = impact_point * max_bounce_angle
+
+        # 5. Calculate the new velocity components using trigonometry
+        ball_move[0] = target_speed * math.sin(bounce_angle)
+        ball_move[1] = -target_speed * math.cos(bounce_angle)
+
+        ball.bottom = player.top
+
+        # Allow the next hit to break a block
         can_break_block = True
 
 
