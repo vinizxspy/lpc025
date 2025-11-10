@@ -63,17 +63,17 @@ def load_image(path: str, *, alpha=True) -> pygame.Surface:
 
 
 # PLACE YOUR IMAGES HERE (all under sprites/)
-BG_PATH = "sprites/fundo.png"
-IDLE_1_PATH = "sprites/parado_1.png"
-IDLE_2_PATH = "sprites/parado_2.png"
-WALK_1_PATH = "sprites/andar_1.png"
-WALK_2_PATH = "sprites/andar_2.png"
-WALK_3_PATH = "sprites/andar_3.png"
-JUMP_1_PATH = "sprites/pulo.png"
-SHOOT_IDLE_PATH = "sprites/parado_atira.png"
-SW_1_PATH = "sprites/atira_1.png"
-SW_2_PATH = "sprites/atira_2.png"
-SW_3_PATH = "sprites/atira_3.png"
+BG_PATH = "sp/fundo.png"
+IDLE_1_PATH = "sp/olho.png"
+IDLE_2_PATH = "sp/fecha.png"
+WALK_1_PATH = "sp/andar1.png"
+WALK_2_PATH = "sp/andar2.png"
+WALK_3_PATH = "sp/andar3.png"
+JUMP_1_PATH = "sp/pulo-.png"
+SHOOT_IDLE_PATH = "sp/para_ati.png"
+SW_1_PATH = "sp/ati1.png"
+SW_2_PATH = "sp/ati2.png"
+SW_3_PATH = "sp/ati3.png"
 
 # Load background once and scale to screen
 bg = load_image(BG_PATH, alpha=False)
@@ -347,3 +347,4 @@ while running:
 
 pygame.quit()
 sys.exit()
+
