@@ -15,7 +15,7 @@ TARGET_SIZE = (48, 48)          # sprite scale (pixel art)
 VEL_X = 3.0                     # horizontal speed (px/frame)
 
 # Animation speeds (~1.0 per 60 FPS tick)
-ANIM_IDLE = 0.04
+ANIM_IDLE = 0.02
 ANIM_WALK = 0.20
 ANIM_WALK_SHOOT = 0.25
 
@@ -42,7 +42,7 @@ GROUND_END_X = 640
 SHOW_GROUND_LINE = False  # debug helper
 
 # Colors
-COLOR_CYAN = (0, 255, 255)
+COLOR_CYAN = (0, 0, 255)
 COLOR_DEBUG_GREEN = (0, 220, 0)
 
 
@@ -74,6 +74,12 @@ SHOOT_IDLE_PATH = "sp/para_ati.png"
 SW_1_PATH = "sp/ati1.png"
 SW_2_PATH = "sp/ati2.png"
 SW_3_PATH = "sp/ati3.png"
+
+# sons
+shoot_sound = pygame.mixer.Sound("sp/tiro.wav")
+BG_MUSIC_PATH = "sp/fundo.mp3" 
+BG_MUSIC_VOLUME = 0.35                 # 0.0 a 1.0
+jump_sound = pygame.mixer.Sound("sp/jump.wav")
 
 # Load background once and scale to screen
 bg = load_image(BG_PATH, alpha=False)
@@ -179,6 +185,7 @@ class Player(pygame.sprite.Sprite):
             self.state = "jump"
             self.frame_index = 0.0
             self._choose_frames(moving=False)
+            jump_sound.play() # sound jump
 
     def set_inputs(self, dir_x: int, shooting_hold: bool) -> None:
         """Update facing, movement state, and shooting flag."""
@@ -200,6 +207,7 @@ class Player(pygame.sprite.Sprite):
         if (now_ms - self.last_shot_ms) >= SHOOT_COOLDOWN_MS:
             mx, my = self._muzzle_pos()
             bullets_group.add(Bullet(mx, my, self.facing == "right"))
+            shoot_sound.play() #sound
             self.last_shot_ms = now_ms
 
     # Animation chooser
@@ -292,6 +300,14 @@ player = Player(x=SCREEN_WIDTH // 2, ground_y=GROUND_Y)
 players = pygame.sprite.Group(player)
 bullets = pygame.sprite.Group()
 
+# loop music
+try:
+    pygame.mixer.music.load(BG_MUSIC_PATH)
+    pygame.mixer.music.set_volume(BG_MUSIC_VOLUME)
+    pygame.mixer.music.play(-1)  # -1 = loop infinito
+except Exception as e:
+    print(f"Falha ao tocar música de fundo '{BG_MUSIC_PATH}': {e}")
+
 want_jump = False
 want_shoot = False
 
@@ -344,6 +360,11 @@ while running:
     players.draw(screen)
     bullets.draw(screen)
     pygame.display.flip()
+
+try:
+    pygame.mixer.music.stop()
+except Exception:
+    pass
 
 pygame.quit()
 sys.exit()
